@@ -8,7 +8,7 @@ def get_starting_location():
     # Validate input
     if start_point not in locations:
         print("Invalid location")
-        print(f"Available locations: {', '.join(locations.keys())}")
+        print(f"Available locations: {', '.join(locations)}")
         exit()
     
     return start_point
