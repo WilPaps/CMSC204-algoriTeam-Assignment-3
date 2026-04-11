@@ -1,78 +1,83 @@
 #Breadth-First Search or Depth-First Search
 from collections import deque
-
-bfs_graph = {
-    'A': ['B', 'E'],
-    'B': ['A', 'F', 'I', 'J'],
-    'C': ['D', 'E'],
-    'D': ['C', 'F'],
-    'E': ['A','C','H'],
-    'F': ['B', 'D', 'H'],
-    'G': ['H', 'I', 'J'],
-    'H': ['E', 'F', 'G', 'J'],
-    'I': ['B', 'G', 'J'],
-    'J': ['B', 'G', 'H', 'I']
-}
-
-matrix_bfs = [
-    #A,B,C,D,E,F,G,H,I,J
-    [0,1,0,0,1,0,0,0,0,0],   #A
-    [1,0,0,0,0,1,0,0,1,1],   #B
-    [0,0,0,1,1,0,0,0,0,0],   #C
-    [0,0,1,0,0,1,0,0,0,0],   #D
-    [1,0,1,0,0,0,0,1,0,0],   #E
-    [0,1,0,0,1,0,0,0,0,0],   #F
-    [0,1,0,0,1,0,0,0,0,0],   #G
-    [0,1,0,0,1,0,0,0,0,0],   #H
-    [0,1,0,0,1,0,0,0,0,0],   #I
-    [0,1,0,0,1,0,0,0,0,0],   #J
-]
-
-def bfs(bfs_graph, start, goal):
-    queue = deque([[start]])
-    visited = set()
+from data import location_names
 
 
-    #discovery time tracker
-    discovery_time = {}
-    time = 0
+class TransportGraph:
 
-    print("\n === BFS TRACE ===")
+    def __init__(self):
+        # Adjacency List
+        self.graph = {
+            'A': ['B', 'E'],
+            'B': ['A', 'F', 'I', 'J'],
+            'C': ['D', 'E'],
+            'D': ['C', 'F'],
+            'E': ['A', 'C', 'H'],
+            'F': ['B', 'D', 'H'],
+            'G': ['H', 'I', 'J'],
+            'H': ['E', 'F', 'G', 'J'],
+            'I': ['B', 'G', 'J'],
+            'J': ['B', 'G', 'H', 'I']
+        }
 
-    while queue:
-        print("\n=====================")
-        print(f"Queue:{[' -> '.join(p) for p in queue]}")
-        print(f"Visited: {visited}")
+        # Adjacency Matrix (for representation only)
+        self.matrix = [
+            [0,1,0,0,1,0,0,0,0,0],
+            [1,0,0,0,0,1,0,0,1,1],
+            [0,0,0,1,1,0,0,0,0,0],
+            [0,0,1,0,0,1,0,0,0,0],
+            [1,0,1,0,0,0,0,1,0,0],
+            [0,1,0,0,1,0,0,0,0,0],
+            [0,0,0,0,0,0,0,1,1,1],
+            [0,1,0,0,1,0,0,0,0,0],
+            [0,1,0,0,1,0,0,0,0,0],
+            [0,1,0,0,1,0,0,0,0,0]
+        ]
 
-        path = queue.popleft()
-        node = path[-1]
+    def bfs(self, start, goal):
+        queue = deque([[start]])
+        visited = set()
 
-        if node not in visited:
-            visited.add(node)
+        discovery_time = {}
+        time = 0
 
-            #record discovery time
-            time += 1
-            discovery_time[node] = time
+        print("\n=== BFS TRACE ===")
 
-            print(f"\nVisit: {node}")
-            print(f"Current Path: {' -> '.join(path)}")
-            print(f"Discovery time of {node}:{time}")
+        while queue:
 
-            if node == goal:
-                print("\n--- RESULT ---")
-                print(f"Shortest path: {' -> '.join(path)}")
-                print(f"Stops:{len(path)-1}")
-                break
+            print("\n----------------------------")
+            print("Queue:", [" -> ".join(location_names[n] for n in p) for p in queue])
+            print("Visited:", [location_names[v] for v in visited])
 
-            for neighbor in bfs_graph[node]:
-                if neighbor not in visited:
-                    new_path = path + [neighbor]
-                    queue.append(new_path)
-                    print(f"Enqueue: {'->'.join(new_path)}")
+            path = queue.popleft()
+            node = path[-1]
 
-    print("\n--- DISCOVERY TIMES ---")
-    for v in discovery_time:
-        print(f"{v}: {discovery_time[v]}")
+            if node not in visited:
+                visited.add(node)
 
-#test
-bfs(bfs_graph, 'G', 'A')
+                time += 1
+                discovery_time[node] = time
+
+                print(f"\nVisit: {location_names[node]}")
+                print("Path:",
+                      " -> ".join(location_names[n] for n in path))
+                print(f"Discovery Time: {time}")
+
+                if node == goal:
+                    print("\n=== RESULT ===")
+                    print("Shortest Path:",
+                          " -> ".join(location_names[n] for n in path))
+                    print(f"Stops: {len(path) - 1}")
+                    return
+
+                for neighbor in self.graph[node]:
+                    if neighbor not in visited:
+                        new_path = path + [neighbor]
+                        queue.append(new_path)
+                        print(f"Enqueue: {' -> '.join(location_names[n] for n in new_path)}")
+
+        print("\nNo path found.")
+
+        print("\n--- DISCOVERY TIMES ---")
+        for v in discovery_time:
+            print(f"{location_names[v]}: {discovery_time[v]}")

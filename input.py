@@ -1,36 +1,20 @@
-from data import locations
+from data import locations, location_names
 
-def get_starting_location():
-    
-    # Prompt user for starting point
-    start_point = input("Enter starting point: ").strip().upper()
-    
-    # Validate input
-    if start_point not in locations:
-        print("Invalid location")
-        print(f"Available locations: {', '.join(locations)}")
-        exit()
-    
-    return start_point
+def display_locations():
+    print("\n=== AVAILABLE LOCATIONS ===")
+    for i, node in enumerate(locations, start=1):
+        print(f"{i}. {location_names[node]}")
 
 
-def get_ending_location():
-    
-    # Prompt user for ending point
-    end_point = input("Enter ending point: ").strip().upper()
-    
-    # Validate input
-    if end_point not in locations:
-        print("Invalid location")
-        print(f"Available locations: {', '.join(locations)}")
-        exit()
-    
-    return end_point
+def get_location(prompt):
+    while True:
+        try:
+            choice = int(input(prompt))
 
-# Run the function when this file is executed directly
-if __name__ == "__main__":
-    starting_location = get_starting_location()
-    print(f"You selected starting point: {starting_location}")
-    
-    ending_location = get_ending_location()
-    print(f"You selected ending point: {ending_location}")
+            if 1 <= choice <= len(locations):
+                return locations[choice - 1]
+
+            print("Invalid number. Try again.")
+
+        except ValueError:
+            print("Invalid input. Please enter a number.")
